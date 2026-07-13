@@ -2,18 +2,26 @@ import streamlit as st
 import pandas as pd
 import joblib
 import json
+import os
 
 st.set_page_config(page_title="House Price Predictor", page_icon="🏠", layout="centered")
 
 @st.cache_resource
 def load_model():
-    model = joblib.load("../Model/house_price_model.pkl")
-    with open("../Model/model_meta.json") as f:
+    # Find the exact directory where app.py is sitting
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    
+    # Correctly build paths to the Model folder one level up
+    model_path = os.path.join(BASE_DIR, "..", "Model", "house_price_model.pkl")
+    meta_path = os.path.join(BASE_DIR, "..", "Model", "model_meta.json")
+    
+    model = joblib.load(model_path)
+    with open(meta_path, "r") as f:
         meta = json.load(f)
+        
     return model, meta
 
 model, meta = load_model()
-
 st.title("🏠 House Price Prediction System")
 st.caption(f"Model in use: **{meta['best_model']}** — R² = {meta['metrics'][meta['best_model']]['R2']:.3f}")
 
