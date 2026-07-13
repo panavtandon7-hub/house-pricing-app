@@ -18,7 +18,7 @@ def load_model():
     return model, meta
 
 model, meta = load_model()
-st.title("?? House Price Prediction System")
+st.title("House Price Prediction System")
 st.caption(f"Model in use: **{meta['best_model']}** - R2 = {meta['metrics'][meta['best_model']]['R2']:.3f}")
 
 st.write("Enter the property details below to get a predicted price.")
@@ -44,7 +44,7 @@ if st.button("Predict Price", type="primary"):
         pred += 200000
     elif furnishing == "Semi-Furnished":
         pred += 100000
-    st.success(f"### Estimated Price: ?{pred:,.0f}")
+    st.success(f"### Estimated Price: INR {pred:,.0f}")
     st.caption("Prediction based on trained model - for demonstration purposes as part of the AIML capstone project.")
 
 st.divider()
