@@ -1,0 +1,49 @@
+{
+  "best_model": "Gradient Boosting (XGBoost-equivalent)",
+  "features_num": [
+    "Area_SqFt",
+    "Bedrooms",
+    "Bathrooms",
+    "Age_Years",
+    "Price_per_SqFt_Bedroom",
+    "Total_Amenities",
+    "Is_New",
+    "Bed_Bath_Ratio"
+  ],
+  "features_cat": [
+    "Location",
+    "Furnishing"
+  ],
+  "locations": [
+    "Downtown",
+    "Rural",
+    "Suburb_A",
+    "Suburb_B",
+    "Suburb_C"
+  ],
+  "furnishing": [
+    "Furnished",
+    "Semi-Furnished",
+    "Unfurnished"
+  ],
+  "metrics": {
+    "Linear Regression": {
+      "MAE": 22657.107727842056,
+      "MSE": 1351929081.0594487,
+      "RMSE": 36768.58823859639,
+      "R2": 0.8496421962638394
+    },
+    "Random Forest": {
+      "MAE": 22545.936674401837,
+      "MSE": 1167403096.6971135,
+      "RMSE": 34167.28108435193,
+      "R2": 0.8701646645868311
+    },
+    "Gradient Boosting (XGBoost-equivalent)": {
+      "MAE": 20448.68537411833,
+      "MSE": 1062874465.6851114,
+      "RMSE": 32601.75556139748,
+      "R2": 0.881790049088654
+    }
+  }
+}
