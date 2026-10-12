@@ -1,25 +1,27 @@
-﻿import streamlit as st
-import pandas as pd
-import joblib
 import json
-import os
+from pathlib import Path
 
-st.set_page_config(page_title="House Price Predictor", page_icon="??", layout="centered")
+import joblib
+import pandas as pd
+import streamlit as st
+
+st.set_page_config(page_title="House Price Predictor", page_icon="🏠", layout="centered")
+
+# Works locally AND on Streamlit Cloud: find the Model folder relative to this file,
+# not relative to wherever the app was started from.
+MODEL_DIR = Path(__file__).resolve().parent.parent / "Model"
 
 @st.cache_resource
 def load_model():
-    model = None
-    meta = {
-        "best_model": "Linear Regression", 
-        "metrics": {"Linear Regression": {"R2": 0.892}}, 
-        "locations": ["Downtown", "Suburbs", "Green Valley", "Airport Road", "High-Tech City"], 
-        "furnishing": ["Furnished", "Semi-Furnished", "Unfurnished"]
-    }
+    model = joblib.load(MODEL_DIR / "house_price_model.pkl")
+    with open(MODEL_DIR / "model_meta.json") as f:
+        meta = json.load(f)
     return model, meta
 
 model, meta = load_model()
-st.title("House Price Prediction System")
-st.caption(f"Model in use: **{meta['best_model']}** - R2 = {meta['metrics'][meta['best_model']]['R2']:.3f}")
+
+st.title("🏠 House Price Prediction System")
+st.caption(f"Model in use: **{meta['best_model']}** — R² = {meta['metrics'][meta['best_model']]['R2']:.3f}")
 
 st.write("Enter the property details below to get a predicted price.")
 
@@ -39,13 +41,21 @@ with col2:
 
 if st.button("Predict Price", type="primary"):
     total_amenities = int(garage) + int(garden) + int(pool) + int(near_school)
-    pred = (area * 3500) + (bedrooms * 150000) + (bathrooms * 100000) + (total_amenities * 50000)
-    if furnishing == "Furnished":
-        pred += 200000
-    elif furnishing == "Semi-Furnished":
-        pred += 100000
-    st.success(f"### Estimated Price: INR {pred:,.0f}")
-    st.caption("Prediction based on trained model - for demonstration purposes as part of the AIML capstone project.")
+    row = pd.DataFrame([{
+        "Area_SqFt": area,
+        "Bedrooms": bedrooms,
+        "Bathrooms": bathrooms,
+        "Age_Years": age,
+        "Price_per_SqFt_Bedroom": area / (bedrooms + 1),
+        "Total_Amenities": total_amenities,
+        "Is_New": int(age <= 5),
+        "Bed_Bath_Ratio": bedrooms / max(bathrooms, 1),
+        "Location": location,
+        "Furnishing": furnishing,
+    }])
+    pred = model.predict(row)[0]
+    st.success(f"### Estimated Price: ₹{pred:,.0f}")
+    st.caption("Prediction based on trained model — for demonstration purposes as part of the AIML capstone project.")
 
 st.divider()
 with st.expander("Model performance (all models compared)"):
